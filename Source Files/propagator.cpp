@@ -99,11 +99,11 @@ class Person {
             cout << s << endl;
         }
         
-        void infect(int numDays) {
+        string infect(int numDays) {
             if(isSusceptible()) {
                 state = 1;
                 infectTime = numDays + 1;
-                update();
+                return update();
             }            
         }
         
@@ -133,13 +133,13 @@ class Person {
         void propogate(int n) {
             if (n == -1) {
                 while (isSusceptible()) {
-                    update();
+                    cout << update() << endl;
                 }
             } 
             else {
                 int i = 0;
                 while (isSusceptible() && i < n) {
-                    update();
+                    cout << update() << endl;
                     i++;
                 }
             }
@@ -278,7 +278,7 @@ class People {
     }
 
     void interact(Person p) {
-        if(isSusceptible()) {
+        if(isInfected()) {
             (*randPerson()).infectChance(-1, 5);
             //(*randPerson()).infect(5);
         }
@@ -358,7 +358,12 @@ string propExport(People &p, string filename) {
 
 int main() {
     srand(time(NULL));
-    string s = "";
+
+    People pop("Small Town", 10, 1, 0);
+    pop.status();
+    pop.propogate(6);
+
+    /*string s = "";
     ofstream all, innocRate;
     all.open("AllDataChance.txt", ios::out|ios::binary);
     innocRate.open("chanceRate.txt", ios::out|ios::binary);
@@ -382,7 +387,7 @@ int main() {
     }
     
     all << s;
-    all.close();
+    all.close();*/
 
     return 0;
 }
