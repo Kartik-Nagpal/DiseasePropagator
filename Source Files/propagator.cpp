@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <random>
+#include <map>
 using namespace std;
 
 class Person {
@@ -38,7 +39,7 @@ class Person {
             identifier = name;
             infectTime = timeTillHealthy;
             transform(status.begin(), status.end(), status.begin(), ::tolower);
-            if(status == "suceptible") {
+            if(status == "susceptible") {
                 state = 0;
             }
             else if(status == "recovered") {
@@ -88,9 +89,9 @@ class Person {
 	        if(isInfected() && infectTime > 0) 
 		       	s += ("Infected for " + std::to_string(infectTime) + " more days.");
 	        else if(isSusceptible())
-		    	s += ("Is suceptible but not infected.");
+		    	s += ("Is susceptible but not infected.");
             if(!isSusceptible()) 
-		    	s += ("Is not suceptible!");
+		    	s += ("Is not susceptible!");
             return s;
         }
 
@@ -230,6 +231,7 @@ class People {
         for(int i = 0; i < pop.size(); i++) {
             if((pop.at(i)).isInfected()) {
                 popInfected = true;
+                return popInfected;
             }
         }
         return popInfected;
@@ -240,6 +242,7 @@ class People {
         for(int i = 0; i < pop.size(); i++) {
             if(pop.at(i).isSusceptible()) {
                 popSusceptible = true;
+                return popSusceptible;
             }
         }
         return popSusceptible;
@@ -280,8 +283,7 @@ class People {
     void interact(Person p) {
         if(isInfected()) {
             (*randPerson()).infectChance(-1, 5);
-            //(*randPerson()).infect(5);
-        }
+        }        
     }
 
     void update() {
@@ -320,10 +322,14 @@ class People {
 
 
 
-string prop(People &p, string filename) {
+string prop(People &p) {
     string s = p.identifier() + "\n-------------------------------------------------";
     
     while(p.isSusceptible() && p.at(0).getDay() < 700) {
+        if(!p.isInfected()) {
+            //cout << ("No More Sick after " + std::to_string(p.at(0).getDay())) << endl;
+            return ("No More Sick after " + std::to_string(p.at(0).getDay()));
+        }
         s += "\n" + p.status_string();
         p.update();
     }
@@ -342,6 +348,10 @@ string propExport(People &p, string filename) {
     out.open(filename, ios::out|ios::binary);
 
     while(p.isSusceptible() && p.at(0).getDay() < 700) {
+        if(!p.isInfected()) {
+            //cout << ("No More Sick after " + std::to_string(p.at(0).getDay())) << endl;
+            return ("No More Sick after " + std::to_string(p.at(0).getDay()));
+        }
         s += "\n" + p.status_string();
         out << p.status_string() << endl;
         p.update();
@@ -359,31 +369,39 @@ string propExport(People &p, string filename) {
 int main() {
     srand(time(NULL));
 
-    People pop("Small Town", 10, 1, 0);
-    pop.status();
-    pop.propogate(6);
-
-    /*string s = "";
+    string s = "";
     ofstream all, innocRate;
     all.open("AllDataChance.txt", ios::out|ios::binary);
     innocRate.open("chanceRate.txt", ios::out|ios::binary);
 
-    int numPop = 90;
+    map<int, int> numStops;
+    int numPop = 100;
 
-    for(int i = 0; i < numPop; i++)
+    for(int i = 60; i <= numPop; i++)
     {
+        numStops.insert(make_pair(i, 0));
         int sum = 0;
-        float numSamples = 20.0;
+        float numSamples = 100.0;
         for(int j = 0; j < numSamples; j++) {
-            //People p(std::to_string(numPop-1-i) + "-1-" + std::to_string(i), numPop-1-i, 1, i);
+            People p(std::to_string(numPop-1-i) + "-1-" + std::to_string(i), numPop-1-i, 1, i);
             //People p(std::to_string(i) + "-1-0", i, 1, 0);
-            People p(std::to_string(i/100) + "%", numPop-1, 1, 0);
+            //People p(std::to_string(i/100) + "%", numPop-1, 1, 0);
             p.setChance(1.0*i/100);
-            s += "\n" + prop(p, p.identifier() + ".txt");
+            string ret = prop(p);
+            if(!isdigit(ret[0])) {
+                numStops[i]++;
+            }
+            s += "\n" + ret;
             sum += p.at(0).getDay();
         }
-        cout << i << " " << sum/numSamples << endl;
-        innocRate << sum/numSamples << endl;
+        cout<< i << " : " << numStops[i] << endl;
+        //innocRate << sum/numSamples << endl;
+    }
+    /*map<int, int>::iterator it = numStops.begin();
+    while(it != numStops.end())
+    {
+        std::cout<<it->first<<" :: "<<it->second<<std::endl;
+        it++;
     }
     
     all << s;
