@@ -10,4 +10,4 @@ To use the code above as a library you must:
 * Similarily, a People object can be constructed using the variety of constructors as `People <name>(string name, [Your choice of additional parameters]);`
 
 ## Understanding the Project
-A report on the project can be found [here]() and the LaTeX can be found [here](https://www.overleaf.com/read/pvbxwhrjtqjr).
+A report on the project can be found [here](https://github.com/Kartik-Nagpal/DiseasePropagator/tree/master/Output%20Files/DiseasePropagatorReport.pdf) and the LaTeX can be found [here](https://www.overleaf.com/read/pvbxwhrjtqjr).
