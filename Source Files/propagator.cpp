@@ -377,6 +377,8 @@ int main() {
     map<int, int> numStops;
     int numPop = 100;
 
+
+    cout << "Innoculation Percentage : Herd Immunity Stops" << endl;
     for(int i = 60; i <= numPop; i++)
     {
         numStops.insert(make_pair(i, 0));
